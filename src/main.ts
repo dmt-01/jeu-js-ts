@@ -1,0 +1,212 @@
+type YuujiroAttacks = {
+  name: string;
+  minDamage: number;
+  maxDamage: number;
+};
+
+const hp_p: HTMLElement | null = document.getElementById("player_hp");
+const hp_e: HTMLElement | null = document.getElementById("enemi_hp");
+const startButton: HTMLButtonElement = document.getElementById("startButton") as HTMLButtonElement;
+const gameStart: HTMLElement = document.getElementById("gameStart") as HTMLElement;
+
+const button_1: HTMLButtonElement = document.getElementById("buton_1") as HTMLButtonElement;
+const button_2: HTMLButtonElement = document.getElementById("buton_2") as HTMLButtonElement;
+const button_3: HTMLButtonElement = document.getElementById("buton_3") as HTMLButtonElement;
+const button_4: HTMLButtonElement = document.getElementById("buton_4") as HTMLButtonElement;
+const yuujiroAttacks: YuujiroAttacks[] = [
+    { name: "douceur", minDamage: 10, maxDamage: 15 },
+    { name: "la claque du cowboy", minDamage: 20, maxDamage: 25 },
+    { name: "Provocation", minDamage: 0, maxDamage: 0 },
+];
+
+
+button_1?.addEventListener("click", attack_poing)
+button_2?.addEventListener("click", attack_Coup_spécial);
+button_3?.addEventListener("click", attack_Esquive);
+button_4?.addEventListener("click", attack_Provocation);
+
+let hp_player: number = 100;
+let hp_enemi: number = 100;
+let esquiveActive = false;
+let provocationActive = false;
+
+startButton.addEventListener("click", () => {
+    startButton.style.display = "none";
+    gameStart.style.display = "block";
+});
+
+function update_hp() {
+    if (hp_p) {
+        hp_p.style.width = hp_player + "%";
+    }
+    if (hp_e) {
+        hp_e.style.width = hp_enemi + "%";
+    }
+}
+
+function finish() {
+    if (hp_enemi === 0 || hp_player === 0) {
+        button_1?.removeEventListener("click", attack_poing)
+        button_2?.removeEventListener("click", attack_Coup_spécial)
+        button_3?.removeEventListener("click", attack_Esquive)
+        button_4?.removeEventListener("click", attack_Provocation)
+    }
+}
+
+function toggleButtons(isEnabled: boolean) {
+    button_1.disabled = !isEnabled;
+    button_2.disabled = !isEnabled;
+    button_3.disabled = !isEnabled;
+    button_4.disabled = !isEnabled;
+}
+
+function enemy_atack() {
+    const attack = yuujiroAttacks[Math.floor(Math.random() * yuujiroAttacks.length)];
+    let damageToPlayer = Math.floor(Math.random() * (attack.maxDamage - attack.minDamage + 1)) + attack.minDamage;
+
+    if (attack.name === "Provocation") {
+        provocationActive = true;
+        document.getElementById("text")!.textContent = "Yuujiro te provoque en souriant ! Ces prochains dégâts seront augmentés.";
+    } else {
+        if (provocationActive) {
+            damageToPlayer = Math.floor(damageToPlayer * 1.3);
+        }
+
+        if (esquiveActive) {
+            esquiveActive = false;
+            document.getElementById("text")!.textContent = `Yuujiro a fait genre de te louper ! Tu as reçu aucun dégâts !`;
+        } else {
+            hp_player = Math.max(0, hp_player - damageToPlayer);
+            update_hp();
+            document.getElementById("text")!.textContent = `Yuujiro utilise ${attack.name} et t'inflige ${damageToPlayer} points de dégâts.`;
+        }
+    }
+
+    if (hp_player === 0) {
+        toggleButtons(false);
+        document.getElementById("text")!.textContent = "Tu as perdu 💀 !";
+    } else {
+        toggleButtons(true);
+    }
+}
+
+function attack_poing() {
+
+    let bonus: number;
+
+    if (provocationActive === true) {
+        bonus = 1.5;
+    } else {
+        bonus = 1;
+    }
+
+    toggleButtons(false);
+
+    const damageToEnemy = Math.floor((Math.random() * 11 + 10) * bonus);
+
+    hp_enemi = Math.max(0, hp_enemi - damageToEnemy);
+
+    update_hp();
+
+    document.getElementById("text")!.textContent = `Baki met un coup de poing et inflige ${damageToEnemy} points de dégâts a son daron!`;
+
+    if (hp_enemi === 0) {
+        document.getElementById("text")!.textContent = "Tu as gagné 🎉 !";
+        finish();
+        return;
+    }
+
+    provocationActive = false;
+
+    setTimeout(() => {
+        enemy_atack();
+    }, 2500);
+}
+
+function attack_Coup_spécial() {
+
+    let bonus: number;
+
+    if (provocationActive === true) {
+        bonus = 1.5;
+    } else {
+        bonus = 1;
+    }
+
+    let isCritical = Math.random() < 0.50;
+    let damage = Math.floor((Math.random() * 16 + 10) * bonus);
+
+    if (isCritical) {
+        damage = Math.floor(damage * 2);
+    }
+
+    toggleButtons(false);
+
+    hp_enemi = Math.max(0, hp_enemi - damage);
+
+    update_hp();
+
+    if (isCritical) {
+
+        document.getElementById("text")!.textContent = `Coup critique ! Baki met un coup de pied retourné dans les parties de Yuujiro avec ${damage} points de dégâts !`;
+
+    } else {
+
+        document.getElementById("text")!.textContent = `Baki met un coup de pied retourné et inflige ${damage} points de dégâts.`;
+
+    }
+
+    if (hp_enemi === 0) {
+
+        document.getElementById("text")!.textContent = "Tu as gagné 🎉 !";
+        finish();
+        return;
+
+    }
+
+    provocationActive = false;
+
+    setTimeout(() => {
+        enemy_atack();
+    }, 2500);
+}
+
+function attack_Esquive() {
+
+    toggleButtons(false);
+    esquiveActive = true;
+
+    update_hp();
+
+    document.getElementById("text")!.textContent = `Baki esquive la claquette de papa ! Aucun dégât infligé.`;
+
+    if (hp_enemi === 0) {
+        document.getElementById("text")!.textContent = "Tu as gagné 🎉 !";
+        finish();
+        return;
+    }
+
+    setTimeout(() => {
+        enemy_atack();
+    }, 2500);
+}
+
+function attack_Provocation() {
+
+    toggleButtons(false);
+    provocationActive = true;
+
+    update_hp();
+
+    document.getElementById("text")!.textContent = `Baki provoque Yuujiro. Baki prépare le prochain coup et augmente ces dégâts`;
+
+    if (hp_enemi === 0) {
+        document.getElementById("text")!.textContent = "Tu as gagné 🎉 !";
+        finish();
+        return;
+    }
+
+    setTimeout(() => {
+        enemy_atack();
+    }, 2500);
+}

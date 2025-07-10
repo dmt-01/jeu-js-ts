@@ -1,11 +1,40 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <meta charset="UTF-8" />
     <title>BAKI fight</title>
-    <link rel="stylesheet" href="./style.css">
-</head>
-<body>
-    
-</body>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <button id="startButton">Pret à te battre?</button>
+    <div id="gameStart" class="start">
+      <div class="game">
+        <div class="player">
+          <h1>BAKI</h1>
+          <div class="hpbar_p" id="player_hp"></div>
+          <img src="./images/baki 3.png" alt="player_1" />
+        </div>
+        <div class="enemi">
+          <h1>YUUJIRO</h1>
+          <div class="hpbar_e" id="enemi_hp"></div>
+          <img src="./images/baki 2.png" alt="player_2" />
+        </div>
+        <div class="style">
+          <p id="text"></p>
+          <div class="button" id="action">
+            <button id="buton_1" class="attack_btn buton_atack">Poing</button>
+            <button id="buton_2" class="attack_btn buton_atack">
+              Coup spécial
+            </button>
+            <button id="buton_3" class="attack_btn buton_atack">Esquive</button>
+            <button id="buton_4" class="attack_btn buton_atack">
+              Provocation
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./dist/main.js" type="module"></script>
+  </body>
 </html>
