@@ -7,6 +7,10 @@ const button_1 = document.getElementById("buton_1");
 const button_2 = document.getElementById("buton_2");
 const button_3 = document.getElementById("buton_3");
 const button_4 = document.getElementById("buton_4");
+const sprite_baki = document.getElementById("sprite_baki");
+const sprite_yuujiro = document.getElementById("sprite_yuujiro");
+const images_baki = ["../images/baki_sprite1.png", "../images/baki_sprite2.png"];
+const images_yuujiro = ["../images/yujiro_sprite1.png", "../images/yujiro_sprite2.png"];
 const yuujiroAttacks = [
     { name: "douceur", minDamage: 10, maxDamage: 15 },
     { name: "la claque du cowboy", minDamage: 20, maxDamage: 25 },
@@ -20,10 +24,33 @@ let hp_player = 100;
 let hp_enemi = 100;
 let esquiveActive = false;
 let provocationActive = false;
+let currentIndex_baki = 0;
+let animationInterval_baki;
+let currentIndex_yuujiro = 0;
+let animationInterval_yuujiro;
 startButton.addEventListener("click", () => {
     startButton.style.display = "none";
     gameStart.style.display = "block";
+    startSpriteAnimation();
 });
+function startSpriteAnimation() {
+    animationInterval_baki = setInterval(() => {
+        currentIndex_baki = (currentIndex_baki + 1) % images_baki.length;
+        if (sprite_baki) {
+            sprite_baki.src = images_baki[currentIndex_baki];
+        }
+    }, 150);
+    animationInterval_yuujiro = setInterval(() => {
+        currentIndex_yuujiro = (currentIndex_yuujiro + 1) % images_yuujiro.length;
+        if (sprite_yuujiro) {
+            sprite_yuujiro.src = images_yuujiro[currentIndex_yuujiro];
+        }
+    }, 150);
+}
+function stopSpriteAnimation() {
+    clearInterval(animationInterval_baki);
+    clearInterval(animationInterval_yuujiro);
+}
 function update_hp() {
     if (hp_p) {
         hp_p.style.width = hp_player + "%";
@@ -34,6 +61,7 @@ function update_hp() {
 }
 function finish() {
     if (hp_enemi === 0 || hp_player === 0) {
+        stopSpriteAnimation();
         button_1 === null || button_1 === void 0 ? void 0 : button_1.removeEventListener("click", attack_poing);
         button_2 === null || button_2 === void 0 ? void 0 : button_2.removeEventListener("click", attack_Coup_spécial);
         button_3 === null || button_3 === void 0 ? void 0 : button_3.removeEventListener("click", attack_Esquive);
