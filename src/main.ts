@@ -63,25 +63,6 @@ function stopSpriteAnimation() {
     clearInterval(animationInterval_yuujiro);
 }
 
-function update_hp() {
-    if (hp_p) {
-        hp_p.style.width = hp_player + "%";
-    }
-    if (hp_e) {
-        hp_e.style.width = hp_enemi + "%";
-    }
-}
-
-function finish() {
-    if (hp_enemi === 0 || hp_player === 0) {
-        stopSpriteAnimation();
-        button_1?.removeEventListener("click", attack_poing);
-        button_2?.removeEventListener("click", attack_Coup_spécial);
-        button_3?.removeEventListener("click", attack_Esquive);
-        button_4?.removeEventListener("click", attack_Provocation);
-    }
-}
-
 function toggleButtons(isEnabled: boolean) {
     button_1.disabled = !isEnabled;
     button_2.disabled = !isEnabled;
@@ -238,4 +219,23 @@ function attack_Provocation() {
     setTimeout(() => {
         enemy_atack();
     }, 2500);
+}
+
+function update_hp() {
+    if (hp_p) {
+        hp_p.style.width = hp_player + "%";
+    }
+    if (hp_e) {
+        hp_e.style.width = hp_enemi + "%";
+    }
+}
+
+function finish() {
+    if (hp_enemi === 0 || hp_player === 0) {
+        stopSpriteAnimation();
+        button_1?.removeEventListener("click", attack_poing);
+        button_2?.removeEventListener("click", attack_Coup_spécial);
+        button_3?.removeEventListener("click", attack_Esquive);
+        button_4?.removeEventListener("click", attack_Provocation);
+    }
 }
